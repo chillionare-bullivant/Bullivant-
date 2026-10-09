@@ -1,0 +1,8 @@
+{
+  "name": "Cybersecurity Fundamentals & Defense Hub",
+  "description": "Comprehensive platform implementing Computer Node Intelligence synthesizing Psychological & Cognitive Dimensions (Fluid Gf, Crystallized Gc, 'g' Factor) with AI & Strategic Threat Recon to track host server Internet interactions and forge a cryptographic and defensive Block Network.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
