@@ -46,6 +46,15 @@ export default async function handler(req: any, res: any) {
     pathname = pathname.replace(/^\/index/, "") || "/";
   }
 
+  // Also support catch-all parameter from Vercel dynamic routes (api/[...path].ts)
+  const dynamicParam = req.query?.path || req.query?.slug || req.query?.route;
+  if (dynamicParam) {
+    const qp = Array.isArray(dynamicParam) ? dynamicParam.join("/") : String(dynamicParam);
+    if (qp) {
+      pathname = "/" + qp.replace(/^\/+/, "");
+    }
+  }
+
   // 1. HEALTH / STATUS / ROOT
   if (pathname === "/" || pathname === "" || pathname === "/health" || pathname === "/status") {
     return res.status(200).json({
