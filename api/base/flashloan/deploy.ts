@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { BASE_CONTRACTS, getValidBaseContractAddress } from "../flashloan";
+import { BASE_CONTRACTS, getValidBaseContractAddress } from "./index";
 
 export default async function handler(req: any, res: any) {
   res.setHeader("Access-Control-Allow-Origin", "*");

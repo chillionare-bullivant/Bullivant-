@@ -1,5 +1,5 @@
-import statusHandler from "./flashloan/status";
-import executeHandler from "./flashloan/execute";
+import statusHandler from "./status";
+import executeHandler from "./execute";
 
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
