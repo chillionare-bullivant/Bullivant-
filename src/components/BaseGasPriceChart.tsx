@@ -60,17 +60,109 @@ export function BaseGasPriceChart({ className = "", compact = false }: BaseGasPr
   const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
+async function fetchDirectBaseRpcFeeHistory(count: number): Promise<GasHistoryApiResponse> {
+  const rpcUrl = "https://mainnet.base.org";
+  const start = Date.now();
+  const resp = await fetch(rpcUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "eth_feeHistory",
+      params: [count, "latest", [50]],
+    }),
+  });
+  const rpcJson = await resp.json();
+  const feeHistory = rpcJson.result;
+  if (!feeHistory || !feeHistory.baseFeePerGas) {
+    throw new Error("Invalid RPC response from Base Mainnet");
+  }
+
+  const oldestBlock = parseInt(feeHistory.oldestBlock, 16);
+  const baseFees = feeHistory.baseFeePerGas.map((hex: string) => parseInt(hex, 16) / 1e9);
+  const rewards = (feeHistory.reward || []).map((arr: string[]) =>
+    arr && arr[0] ? parseInt(arr[0], 16) / 1e9 : 0.001
+  );
+  const gasUsedRatios = feeHistory.gasUsedRatio || [];
+
+  const historyPoints: GasHistoryPoint[] = [];
+  const len = Math.min(count, baseFees.length - 1);
+
+  for (let i = 0; i < len; i++) {
+    const blockNum = oldestBlock + i;
+    const baseFee = baseFees[i] || 0.005;
+    const priorityFee = rewards[i] || 0.001;
+    const totalGasPrice = parseFloat((baseFee + priorityFee).toFixed(6));
+    const gasUsed = gasUsedRatios[i] ?? 0.08;
+    const flashCostUsd = parseFloat(((450000 * totalGasPrice * 2500) / 1e9).toFixed(4));
+
+    historyPoints.push({
+      blockNumber: blockNum,
+      baseFeeGwei: parseFloat(baseFee.toFixed(6)),
+      priorityFeeGwei: parseFloat(priorityFee.toFixed(6)),
+      totalGasPriceGwei: totalGasPrice,
+      gasUsedRatio: parseFloat(gasUsed.toFixed(4)),
+      estimatedTxCostUsd: flashCostUsd,
+      timestamp: new Date(Date.now() - (len - i) * 2000).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
+    });
+  }
+
+  const prices = historyPoints.map((p) => p.totalGasPriceGwei);
+  const currentPrice = prices[prices.length - 1] || 0.006;
+  const avgPrice = prices.length ? parseFloat((prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(6)) : currentPrice;
+  const minPrice = prices.length ? Math.min(...prices) : currentPrice;
+  const maxPrice = prices.length ? Math.max(...prices) : currentPrice;
+
+  return {
+    success: true,
+    network: "Base Mainnet (8453)",
+    providerType: "Base Public Node (Direct Fallback)",
+    alchemySdkVersion: "1.0.0 (Direct Node)",
+    latencyMs: Date.now() - start,
+    currentGasPriceGwei: currentPrice,
+    averageGasPriceGwei: avgPrice,
+    minGasPriceGwei: minPrice,
+    maxGasPriceGwei: maxPrice,
+    congestionLevel: avgPrice > 0.05 ? "Elevated" : avgPrice > 0.02 ? "Moderate" : "Low",
+    flashLoanGasCostUsd: parseFloat(((450000 * currentPrice * 2500) / 1e9).toFixed(4)),
+    flashLoanGasCostEth: parseFloat(((450000 * currentPrice) / 1e9).toFixed(8)),
+    standardTxCostUsd: parseFloat(((21000 * currentPrice * 2500) / 1e9).toFixed(4)),
+    history: historyPoints,
+    alchemyStatus: "LIVE_FALLBACK",
+    alchemyNotice: "Connected directly to Base Mainnet node for maximum uptime.",
+  };
+}
+
   const fetchGasHistory = async (count: number = blockCount, silent = false) => {
     if (!silent) setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/base/gas-history?blocks=${count}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json: GasHistoryApiResponse = await res.json();
-      if (!json.success) throw new Error(json.error || "Failed to load Base gas history");
+      let json: GasHistoryApiResponse | null = null;
+      try {
+        const res = await fetch(`/api/base/gas-history?blocks=${count}`);
+        const contentType = res.headers.get("content-type") || "";
+        if (res.ok && contentType.includes("application/json")) {
+          const parsed = await res.json();
+          if (parsed && parsed.success) {
+            json = parsed;
+          }
+        }
+      } catch (_apiErr) {
+        // Fallback to direct Base RPC below
+      }
+
+      if (!json) {
+        json = await fetchDirectBaseRpcFeeHistory(count);
+      }
+
       setData(json);
     } catch (err: any) {
-      setError(err.message || "Failed to query Alchemy Base gas oracle");
+      setError(err.message || "Failed to query Base gas oracle");
     } finally {
       if (!silent) setLoading(false);
     }
