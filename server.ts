@@ -1181,7 +1181,7 @@ async function startServer() {
     usdbc: "0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA",
     weth: "0x4200000000000000000000000000000000000006",
     cbeth: "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
-    defaultArbitrageContract: "0x6b2D3688126e855524316dF9e2E2F80F83F5781a",
+    defaultArbitrageContract: "0x6B2d3688126e855524316Df9e2E2F80f83F5781A",
   };
 
   function getValidBaseContractAddress(override?: string): string {
