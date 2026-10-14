@@ -1412,11 +1412,11 @@ export function DexPriceScannerDemo() {
                   <div className="p-2.5 bg-blue-50/60 border border-blue-200/70 rounded-lg flex items-center justify-between text-xs font-mono">
                     <div className="truncate">
                       <span className="text-zinc-500 text-[10px] block uppercase font-sans font-semibold text-blue-700">Base Arbitrage Contract</span>
-                      <span className="text-blue-900 font-bold">0x6b2D...781a</span>
+                      <span className="text-blue-900 font-bold">0x6B2d...781A</span>
                     </div>
                     <div className="flex items-center space-x-1.5 flex-shrink-0">
                       <a
-                        href="https://basescan.org/address/0x6b2D3688126e855524316dF9e2E2F80F83F5781a"
+                        href="https://basescan.org/address/0x6B2d3688126e855524316Df9e2E2F80f83F5781A"
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-100 text-blue-800 hover:bg-blue-200 text-[10px] font-sans font-medium transition-colors"
