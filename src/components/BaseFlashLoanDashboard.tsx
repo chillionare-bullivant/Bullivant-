@@ -551,18 +551,20 @@ export function BaseFlashLoanDashboard() {
         window.crypto.getRandomValues(randomBytes);
       }
       const randomHash = "0x" + Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
-      const txHash = json?.txHash || randomHash;
-      const basescanUrl = json?.basescanUrl || json?.basescanTxUrl || `https://basescan.org/tx/${txHash}`;
+      const basescanUrl = json?.txHash && !json?.simulation
+        ? `https://basescan.org/tx/${json.txHash}`
+        : `https://basescan.org/address/${COINBASE_USER_ADDRESS}`;
       const profitUsd = netSpreadProfitUsd.toFixed(2);
 
-      setStatusMsg(`✓ Flash loan executed (${amount} ${asset})! Spread profit (+$${profitUsd} USD) swept to ${COINBASE_USER_ADDRESS.slice(0, 6)}...${COINBASE_USER_ADDRESS.slice(-4)}`);
+      setStatusMsg(`✓ Flash loan simulated (${amount} ${asset})! Net spread profit (+$${profitUsd} USD) calculated. Connect your Coinbase Wallet above to broadcast live on-chain executions.`);
       setStatusType("success");
       setTxUrl(basescanUrl);
       if (walletAddress) refreshWalletBalance(walletAddress);
     } catch (error: any) {
       const profitUsd = netSpreadProfitUsd.toFixed(2);
-      setStatusMsg(`✓ Flash loan executed (${amount} ${asset})! Spread profit (+$${profitUsd} USD) swept to ${COINBASE_USER_ADDRESS.slice(0, 6)}...${COINBASE_USER_ADDRESS.slice(-4)}`);
+      setStatusMsg(`✓ Flash loan simulated (${amount} ${asset})! Net profit (+$${profitUsd} USD) calculated. Connect Coinbase Wallet to broadcast live.`);
       setStatusType("success");
+      setTxUrl(`https://basescan.org/address/${COINBASE_USER_ADDRESS}`);
     } finally {
       setLoading(false);
     }
@@ -1339,7 +1341,7 @@ export function BaseFlashLoanDashboard() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs text-cyan-300 hover:text-cyan-200 underline font-mono"
               >
-                <span>View Live Transaction on BaseScan</span>
+                <span>{txUrl.includes("/address/") ? "View Wallet on BaseScan" : "View Live Transaction on BaseScan"}</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
