@@ -486,18 +486,33 @@ export function BaseFlashLoanDashboard() {
         const FLASHLOAN_ABI = [
           "function requestFlashLoanUSDC(uint256 amount) external",
           "function requestFlashLoanWETH(uint256 amount) external",
+          "function requestFlashLoan(address asset, uint256 amount) external",
           "function getBalance(address token) view returns (uint256)",
         ];
 
         const contract = new ethers.Contract(contractAddress, FLASHLOAN_ABI, signer);
 
+        const BASE_USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+        const BASE_WETH = "0x4200000000000000000000000000000000000006";
+
         let tx;
-        if (asset === "USDC") {
-          const parsedAmount = ethers.parseUnits(amount.toString(), 6);
-          tx = await contract.requestFlashLoanUSDC(parsedAmount);
-        } else {
-          const parsedAmount = ethers.parseUnits(amount.toString(), 18);
-          tx = await contract.requestFlashLoanWETH(parsedAmount);
+        try {
+          if (asset === "USDC") {
+            const parsedAmount = ethers.parseUnits(amount.toString(), 6);
+            tx = await contract.requestFlashLoanUSDC(parsedAmount);
+          } else {
+            const parsedAmount = ethers.parseUnits(amount.toString(), 18);
+            tx = await contract.requestFlashLoanWETH(parsedAmount);
+          }
+        } catch {
+          // Fallback to generic requestFlashLoan(asset, amount)
+          if (asset === "USDC") {
+            const parsedAmount = ethers.parseUnits(amount.toString(), 6);
+            tx = await contract.requestFlashLoan(BASE_USDC, parsedAmount);
+          } else {
+            const parsedAmount = ethers.parseUnits(amount.toString(), 18);
+            tx = await contract.requestFlashLoan(BASE_WETH, parsedAmount);
+          }
         }
 
         setStatusMsg(`✓ Flash loan broadcast to Base: ${tx.hash.slice(0, 16)}...`);

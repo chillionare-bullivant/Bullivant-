@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 const FLASHLOAN_CONTRACT_ADDRESS =
   process.env.BASE_FLASHLOAN_CONTRACT_ADDRESS ||
   process.env.ARBITRAGE_CONTRACT_ADDRESS ||
-  "0x6b2D3688126e855524316dF9e2E2F80F83F5781a";
+  "0x6B2d3688126e855524316Df9e2E2F80f83F5781A";
 
 const BASE_RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
 const SIGNER_PRIVATE_KEY = process.env.SIGNER_PRIVATE_KEY || process.env.PRIVATE_KEY || "";
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     const contractAddress =
       FLASHLOAN_CONTRACT_ADDRESS && ethers.isAddress(FLASHLOAN_CONTRACT_ADDRESS)
         ? FLASHLOAN_CONTRACT_ADDRESS
-        : "0x6b2D3688126e855524316dF9e2E2F80F83F5781a";
+        : "0x6B2d3688126e855524316Df9e2E2F80f83F5781A";
 
     if (!contractAddress || !ethers.isAddress(contractAddress)) {
       return NextResponse.json(

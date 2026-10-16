@@ -92,7 +92,7 @@ contract FlashLoanLeverage is IFlashLoanSimpleReceiver {
      * @param asset ERC20 token address (e.g. USDC on Base: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
      * @param amount Principal amount to borrow in token units (wei)
      */
-    function requestFlashLoan(address asset, uint256 amount) external onlyOwner {
+    function requestFlashLoan(address asset, uint256 amount) public onlyOwner {
         emit FlashLoanInitiated(asset, amount, msg.sender);
 
         bytes memory params = "";
@@ -103,6 +103,20 @@ contract FlashLoanLeverage is IFlashLoanSimpleReceiver {
             params,
             0 // referralCode
         );
+    }
+
+    /**
+     * @notice Initiates a flash loan in USDC (convenience for web3 dashboards)
+     */
+    function requestFlashLoanUSDC(uint256 amount) external onlyOwner {
+        requestFlashLoan(BASE_USDC, amount);
+    }
+
+    /**
+     * @notice Initiates a flash loan in WETH (convenience for web3 dashboards)
+     */
+    function requestFlashLoanWETH(uint256 amount) external onlyOwner {
+        requestFlashLoan(BASE_WETH, amount);
     }
 
     /**

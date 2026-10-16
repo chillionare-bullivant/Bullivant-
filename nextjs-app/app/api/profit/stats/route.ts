@@ -8,7 +8,7 @@ export async function GET() {
     totalExecutions: 42,
     winRate: "100%",
     beneficiary: "0xD6d68800CD199D990C7ACCff409bE60c6508660a",
-    contractAddress: "0x6b2D3688126e855524316dF9e2E2F80F83F5781a",
+    contractAddress: "0x6B2d3688126e855524316Df9e2E2F80f83F5781A",
     network: "Base Mainnet (8453)",
     autoPilot: true,
   };

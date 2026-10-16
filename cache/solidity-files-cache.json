@@ -45,8 +45,8 @@
       ]
     },
     "/app/applet/contracts/FlashLoanLeverage.sol": {
-      "lastModificationDate": 1791459931721,
-      "contentHash": "b5c15744bc4119cbabe223594bb14f0d",
+      "lastModificationDate": 1792124501459,
+      "contentHash": "4aca27fb789ae73db789606b7880bfbc",
       "sourceName": "contracts/FlashLoanLeverage.sol",
       "solcConfig": {
         "version": "0.8.20",

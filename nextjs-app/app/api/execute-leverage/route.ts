@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 
 const DEFAULT_SECRET = "base_flashloan_sec_7a8f9c1e2b4d5e6a7c8b9d0e1f2a3b4c";
 const DEFAULT_OWNER = "0xD6d68800CD199D990C7ACCff409bE60c6508660a";
-const DEFAULT_CONTRACT = "0x6b2D3688126e855524316dF9e2E2F80F83F5781a";
+const DEFAULT_CONTRACT = "0x6B2d3688126e855524316Df9e2E2F80f83F5781A";
 
 export async function POST(req: NextRequest) {
   try {
